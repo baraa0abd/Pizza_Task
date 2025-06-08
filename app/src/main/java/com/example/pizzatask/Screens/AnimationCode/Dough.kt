@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -35,16 +36,16 @@ fun PizzaImageSwitcher(
         R.drawable.breadwhite
     ),
     itemSize: Dp = 215.dp,
-    spacing: Dp = 160.dp,
-    verticalOffset: Dp = 175.dp,
+    spacing: Dp = 165.dp,
+    verticalOffset: Dp = 475.dp,
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp)
-) { // 2. FIX: The opening brace '{' for the function body belongs HERE, after the parameter list is closed.
+) {
 
-    // The function's logic now correctly starts here.
     LazyRow(
         modifier = modifier
+            .padding(75.dp)
             .height(itemSize)
-            .offset(y = verticalOffset),
+            .offset(y = 60.dp),
         contentPadding = contentPadding,
         horizontalArrangement = Arrangement.spacedBy(spacing),
         verticalAlignment = Alignment.CenterVertically

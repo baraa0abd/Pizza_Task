@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.pizzatask.Screens.AnimationCode.PizzaImageSwitcher
 import com.example.pizzatask.Screens.MainPage.Capation
 import com.example.pizzatask.Screens.MainPage.PizzaScreen
 import com.example.pizzatask.Screens.MainPage.Plate
@@ -26,6 +27,7 @@ class MainActivity : ComponentActivity() {
             Capation()
             VegSelection()
             AddToCartButton()
+            PizzaImageSwitcher()
         }
     }
 }
