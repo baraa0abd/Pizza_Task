@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 fun Capation(){
     Row(
         modifier = Modifier
+            .padding(15.dp)
             .offset(y = 560.dp),
         horizontalArrangement = Arrangement.Start
     ) {

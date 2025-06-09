@@ -65,11 +65,15 @@ fun PizzaImageSwitcher(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PizzaImageSwitcherPreview() {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier
+        .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         PizzaImageSwitcher(
             modifier = Modifier.fillMaxWidth(),
             spacing = 80.dp, // Reduced spacing for preview
-            verticalOffset = 100.dp // Adjusted for preview
+//            verticalOffset = 100.dp // Adjusted for preview
         )
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
@@ -41,6 +42,7 @@ fun VegSelection() {
 
     LazyRow(
         modifier = Modifier
+            .padding(16.dp)
             .offset(y=600.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
