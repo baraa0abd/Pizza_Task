@@ -1,36 +1,112 @@
 package com.example.pizzatask.Screens.MainPage
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.pizzatask.Screens.AnimationCode.PizzaImageSwitcher
+import com.example.pizzatask.R
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlin.math.absoluteValue
+
+// Data class for a pizza type, defined locally in this file.
+data class BreadType(
+    val name: String,
+    val drawableRes: Int
+)
+
+
+@Composable
+fun PizzaImageSwitcher(
+    pizzas: List<BreadType>,
+    modifier: Modifier = Modifier,
+    imageSize: Dp,
+    onPizzaSelected: (Int) -> Unit
+) {
+    val lazyListState = rememberLazyListState()
+    val density = LocalDensity.current.density
+
+    LaunchedEffect(lazyListState.isScrollInProgress) {
+        if (!lazyListState.isScrollInProgress) {
+            val center = lazyListState.layoutInfo.viewportEndOffset / 2
+            val closestItem = lazyListState.layoutInfo.visibleItemsInfo.minByOrNull {
+                (it.offset + it.size / 2 - center).absoluteValue
+            }
+            if (closestItem != null) {
+                lazyListState.animateScrollToItem(closestItem.index)
+            }
+        }
+    }
+
+    LaunchedEffect(lazyListState) {
+        snapshotFlow { lazyListState.firstVisibleItemIndex }
+            .distinctUntilChanged()
+            .collect { index ->
+                onPizzaSelected(index)
+            }
+    }
+
+    LazyRow(
+        state = lazyListState,
+        modifier = modifier,
+        contentPadding = PaddingValues(horizontal = (360.dp - imageSize) / 2f),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        items(pizzas.size) { index ->
+            val pizza = pizzas[index]
+            val center = lazyListState.layoutInfo.viewportEndOffset / 2
+            val itemInfo = lazyListState.layoutInfo.visibleItemsInfo.find { it.index == index }
+            val itemWidthPx = imageSize.value * density
+
+            val scale = if (itemInfo != null) {
+                val itemCenter = itemInfo.offset + itemInfo.size / 2
+                val distance = (itemCenter - center).absoluteValue
+                (1f - (distance / (itemWidthPx * 2f)).coerceIn(0f, 0.4f))
+            } else { 0.6f }
+
+            val alpha = if (itemInfo != null) {
+                val itemCenter = itemInfo.offset + itemInfo.size / 2
+                val distance = (itemCenter - center).absoluteValue
+                (1f - (distance / (itemWidthPx * 1.5f)).coerceIn(0f, 0.6f))
+            } else { 0.4f }
+
+            Image(
+                painter = painterResource(id = pizza.drawableRes),
+                contentDescription = pizza.name,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .size(imageSize)
+                    .graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                        this.alpha = alpha
+                    }
+            )
+        }
+    }
+}
+
 
 @Composable
 fun SizeSelector(
@@ -39,11 +115,11 @@ fun SizeSelector(
     modifier: Modifier = Modifier
 ) {
     val sizes = listOf("S", "M", "L")
-    var selectedSize by remember { mutableStateOf(initialSelectedSize) }
+    var selectedSize by remember(initialSelectedSize) { mutableStateOf(initialSelectedSize) }
 
     Row(
         modifier = modifier
-            .offset(y = 490.dp)
+            .offset(y=-250.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
@@ -61,7 +137,7 @@ fun SizeSelector(
                         shape = CircleShape
                     )
                     .background(
-                        color = if (isSelected) Color.Red.copy(alpha = 0.1f) else Color.White
+                        color = if (isSelected) Color.Red.copy(alpha = 0.1f) else Color.Transparent
                     )
                     .clickable {
                         selectedSize = size
@@ -72,49 +148,67 @@ fun SizeSelector(
                 Text(
                     text = size,
                     fontSize = 16.sp,
-                    color = if (isSelected) Color.Red else Color.Black
+                    color = if (isSelected) Color.Red else Color.Black,
+                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                 )
             }
         }
     }
 }
+
+
 @Composable
 fun PizzaScreen() {
-    // 1. State management for pizza size
-    var pizzaSize by remember { mutableStateOf("M") } // Default to "M"
+    var pizzaSize by remember { mutableStateOf("M") }
+    var selectedPizzaIndex by remember { mutableStateOf(0) }
 
-    // 2. Derived size in dp based on selected size
-    val pizzaImageSize by remember(pizzaSize) {
+    val pizzaImageSize = remember(pizzaSize) {
         derivedStateOf {
             when (pizzaSize) {
-                "S" -> 175.dp
-                "M" -> 205.dp
-                "L" -> 225.dp
-                else -> 205.dp // Default to medium if unknown
+                "S" -> 180.dp
+                "M" -> 220.dp
+                "L" -> 260.dp
+                else -> 220.dp
             }
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        // 3. Display the pizza images with current size
-        PizzaImageSwitcher(
-            itemSize = pizzaImageSize,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .offset(y = -200.dp)
+    val pizzas = remember {
+        listOf(
+            // FIXED: Removed the explicit package path to use the local BreadType
+            BreadType("Neapolitan", R.drawable.bread_chesse),
+            BreadType("Margherita", R.drawable.breadred),
+            BreadType("Pepperoni", R.drawable.breadredd),
+            BreadType("Vegetarian", R.drawable.breadreddd),
+            BreadType("Hawaiian", R.drawable.breadwhite)
         )
+    }
 
-        // 4. Size selector at the bottom
+    Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .offset(y=-120.dp)
+                .fillMaxSize()
+                .padding(bottom = 100.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            PizzaImageSwitcher(
+                pizzas = pizzas,
+                imageSize = pizzaImageSize.value,
+                onPizzaSelected = { index ->
+                    selectedPizzaIndex = index
+                }
+            )
+        }
+
         SizeSelector(
-            initialSelectedSize = pizzaSize, // Pass the current size
+            initialSelectedSize = pizzaSize,
             onSizeSelected = { newSize ->
-                pizzaSize = newSize // Update the state when user selects
+                pizzaSize = newSize
             },
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 32.dp)
-                .offset(y = -750.dp)
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 48.dp)
         )
     }
 }
