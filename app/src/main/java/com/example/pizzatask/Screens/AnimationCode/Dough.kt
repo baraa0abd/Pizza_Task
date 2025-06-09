@@ -24,7 +24,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.pizzatask.R
-
 @Composable
 fun PizzaImageSwitcher(
     modifier: Modifier = Modifier,
@@ -35,17 +34,16 @@ fun PizzaImageSwitcher(
         R.drawable.breadreddd,
         R.drawable.breadwhite
     ),
-    itemSize: Dp = 215.dp,
+    itemSize: Dp = 205.dp, // Default to medium size
     spacing: Dp = 165.dp,
-    verticalOffset: Dp = 475.dp,
+    verticalOffset: Dp = 60.dp,
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp)
 ) {
-
     LazyRow(
         modifier = modifier
             .padding(75.dp)
             .height(itemSize)
-            .offset(y = 60.dp),
+            .offset(y = verticalOffset),
         contentPadding = contentPadding,
         horizontalArrangement = Arrangement.spacedBy(spacing),
         verticalAlignment = Alignment.CenterVertically
@@ -58,12 +56,11 @@ fun PizzaImageSwitcher(
                 modifier = Modifier
                     .size(itemSize)
                     .aspectRatio(1f)
-                    .clip(CircleShape) // Optional: makes images circular
+                    .clip(CircleShape)
             )
         }
     }
 }
-
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

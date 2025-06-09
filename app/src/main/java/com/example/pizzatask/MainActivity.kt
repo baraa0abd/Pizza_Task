@@ -6,13 +6,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.pizzatask.Screens.AnimationCode.PizzaImageSwitcher
 import com.example.pizzatask.Screens.MainPage.Capation
 import com.example.pizzatask.Screens.MainPage.PizzaScreen
 import com.example.pizzatask.Screens.MainPage.Plate
 import com.example.pizzatask.Screens.MainPage.PriceText
+import com.example.pizzatask.Screens.MainPage.SizeSelector
 import com.example.pizzatask.Screens.MainPage.VegSelection
 
 class MainActivity : ComponentActivity() {
@@ -27,7 +32,6 @@ class MainActivity : ComponentActivity() {
             Capation()
             VegSelection()
             AddToCartButton()
-            PizzaImageSwitcher()
         }
     }
 }

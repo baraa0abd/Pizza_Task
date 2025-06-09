@@ -5,14 +5,19 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,20 +27,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.pizzatask.Screens.AnimationCode.PizzaImageSwitcher
 
 @Composable
 fun SizeSelector(
-    selectedSize: String,
+    initialSelectedSize: String = "M",
     onSizeSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val sizes = listOf("S", "M", "L")
+    var selectedSize by remember { mutableStateOf(initialSelectedSize) }
 
     Row(
-        modifier = modifier.fillMaxWidth()
-            .offset(y = 460.dp),
+        modifier = modifier
+            .offset(y = 490.dp)
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -54,7 +63,10 @@ fun SizeSelector(
                     .background(
                         color = if (isSelected) Color.Red.copy(alpha = 0.1f) else Color.White
                     )
-                    .clickable { onSizeSelected(size) },
+                    .clickable {
+                        selectedSize = size
+                        onSizeSelected(size)
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -66,17 +78,45 @@ fun SizeSelector(
         }
     }
 }
-
-// Usage example:
 @Composable
 fun PizzaScreen() {
-    var selectedSize by remember { mutableStateOf("M") }
+    // 1. State management for pizza size
+    var pizzaSize by remember { mutableStateOf("M") } // Default to "M"
 
-    SizeSelector(
-        selectedSize = selectedSize,
-        onSizeSelected = { size -> selectedSize = size },
-        modifier = Modifier.padding(16.dp)
-    )
+    // 2. Derived size in dp based on selected size
+    val pizzaImageSize by remember(pizzaSize) {
+        derivedStateOf {
+            when (pizzaSize) {
+                "S" -> 175.dp
+                "M" -> 205.dp
+                "L" -> 225.dp
+                else -> 205.dp // Default to medium if unknown
+            }
+        }
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        // 3. Display the pizza images with current size
+        PizzaImageSwitcher(
+            itemSize = pizzaImageSize,
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .offset(y = -200.dp)
+        )
+
+        // 4. Size selector at the bottom
+        SizeSelector(
+            initialSelectedSize = pizzaSize, // Pass the current size
+            onSizeSelected = { newSize ->
+                pizzaSize = newSize // Update the state when user selects
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 32.dp)
+                .offset(y = -750.dp)
+        )
+    }
 }
 
 @Preview(showBackground = true, showSystemUi = true)
