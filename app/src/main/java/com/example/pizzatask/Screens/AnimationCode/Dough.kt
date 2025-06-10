@@ -36,14 +36,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pizzatask.R
+import com.example.pizzatask.Screens.MainPage.BreadType
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlin.math.absoluteValue
 
-// Data class for a bread type
-data class BreadType(
-    val name: String,
-    val drawableRes: Int
-)
 
 @Composable
 fun PizzaImageSwitcher(

@@ -39,15 +39,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pizzatask.R
+import com.example.pizzatask.Screens.model.BreadType
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlin.math.absoluteValue
-
-// Data class for a pizza type, defined locally in this file.
-data class BreadType(
-    val name: String,
-    val drawableRes: Int
-)
-
 
 @Composable
 fun PizzaImageSwitcher(
@@ -202,7 +196,7 @@ fun PizzaScreen() {
             modifier = Modifier
                 .offset(y=-120.dp)
                 .fillMaxSize()
-                .padding(bottom = 100.dp),
+                .padding(bottom = 120.dp),
             contentAlignment = Alignment.Center
         ) {
             PizzaImageSwitcher(
