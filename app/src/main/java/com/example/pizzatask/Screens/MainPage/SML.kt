@@ -196,7 +196,7 @@ fun PizzaScreen() {
             modifier = Modifier
                 .offset(y=-120.dp)
                 .fillMaxSize()
-                .padding(bottom = 120.dp),
+                .padding(bottom = 20.dp),
             contentAlignment = Alignment.Center
         ) {
             PizzaImageSwitcher(

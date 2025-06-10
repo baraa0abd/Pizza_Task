@@ -12,7 +12,7 @@ import com.example.pizzatask.Screens.MainPage.Capation
 import com.example.pizzatask.Screens.MainPage.PizzaScreen
 import com.example.pizzatask.Screens.MainPage.Plate
 import com.example.pizzatask.Screens.MainPage.PriceText
-import com.example.pizzatask.Screens.MainPage.VegSelection
+import com.example.pizzatask.Screens.ToppingSelectionScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
             PriceText()
             PizzaScreen()
             Capation()
-            VegSelection()
+            ToppingSelectionScreen()
             AddToCartButton()
         }
     }
@@ -38,6 +38,6 @@ fun PizzaTopBarPreview() {
     PriceText()
     PizzaScreen()
     Capation()
-    VegSelection()
+    ToppingSelectionScreen()
     AddToCartButton()
 }

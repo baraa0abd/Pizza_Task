@@ -1,5 +1,6 @@
-package com.example.pizzatask.Screens.MainPage
+package com.example.pizzatask.Screens
 
+// All necessary imports
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -7,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -23,27 +25,51 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.pizzatask.R
 
 @Composable
-fun VegSelection() {
-    // A list to hold your drawable resources for the vegetable items
+fun ToppingSelectionScreen() {
     val vegItems = listOf(
-        R.drawable.basil_3, // Replace with your actual drawable names
+        R.drawable.basil_3,
         R.drawable.mushroom,
         R.drawable.onion_10,
         R.drawable.broccoli_3,
         R.drawable.sausage_5
     )
-
+    val basilItemIndex = 0
     var selectedItemIndex by remember { mutableStateOf(-1) }
 
+    Box(modifier = Modifier.fillMaxSize()) {
+        // --- The Animation ---
+        if (selectedItemIndex == basilItemIndex) {
+            BasilSpreadFromAssets()
+        }
+
+        // --- The Selection UI ---
+        Box(modifier = Modifier.align(Alignment.BottomCenter)) {
+            VegSelection(
+                vegItems = vegItems,
+                selectedItemIndex = selectedItemIndex,
+                onItemSelected = { index ->
+                    selectedItemIndex = if (selectedItemIndex == index) -1 else index
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun VegSelection(
+    vegItems: List<Int>,
+    selectedItemIndex: Int,
+    onItemSelected: (Int) -> Unit
+) {
     LazyRow(
         modifier = Modifier
-            .padding(16.dp)
-            .offset(y=600.dp)
+
+                .padding(16.dp)
+            .offset(y=-50.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(horizontal = 16.dp)
@@ -52,31 +78,24 @@ fun VegSelection() {
             val isSelected = selectedItemIndex == index
             Box(
                 modifier = Modifier
+                    .offset(y=-50.dp)
                     .size(80.dp)
                     .clip(CircleShape)
-                    .background(if (isSelected) Color(0xFFE0F7E0) else Color.Transparent) // Highlight if selected
+                    .background(if (isSelected) Color(0xFFE0F7E0) else Color.Transparent)
                     .border(
-                        width = 1.dp,
+                        width = 2.dp,
                         color = if (isSelected) Color.Green else Color.LightGray,
                         shape = CircleShape
                     )
-                    .clickable {
-                        selectedItemIndex = if (isSelected) -1 else index // Toggle selection
-                    },
+                    .clickable { onItemSelected(index) },
                 contentAlignment = Alignment.Center
             ) {
                 Image(
                     painter = painterResource(id = vegItems[index]),
-                    contentDescription = "Vegetable Item ${index + 1}",
+                    contentDescription = "Topping Item ${index + 1}",
                     modifier = Modifier.size(60.dp)
                 )
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun VegSelectionPreview() {
-    VegSelection()
 }
