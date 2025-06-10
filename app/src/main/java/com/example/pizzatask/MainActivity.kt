@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,15 +29,25 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            PizzaTopBar()
-            Plate1()
-            PriceText()
-            PizzaScreen()
-            Capation()
-            AddToCartButton()
-            PizzaTaskTheme {
-                MainPizzaPage()
-            }
+            Main()
+        }
+    }
+}
+
+@Composable
+fun Main(){
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ){
+        PizzaTopBar()
+        Plate1()
+        PriceText()
+        PizzaScreen()
+        Capation()
+        AddToCartButton()
+        PizzaTaskTheme {
+            MainPizzaPage()
         }
     }
 }
@@ -52,14 +63,10 @@ fun MainPizzaPage() {
         Topping(imageRes = R.drawable.sausage_5, assetPath = "sausage")
     )
 
-    // THIS IS THE CORRECTED LINE: mutableStateOf (no space)
     var selectedIndices by remember { mutableStateOf(emptySet<Int>()) }
 
-    // 2. DEFINE THE LAYOUT
     Box(modifier = Modifier.fillMaxSize()) {
-        // ... other composables like Plate, PizzaScreen, etc. go here ...
 
-        // 3. USE THE ToppingSpreadAnimation FUNCTION
         selectedIndices.forEach { index ->
             val selectedTopping = toppings[index]
             ToppingSpreadAnimation(
@@ -94,5 +101,5 @@ fun MainPizzaPage() {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    MainPizzaPage()
+    Main()
 }

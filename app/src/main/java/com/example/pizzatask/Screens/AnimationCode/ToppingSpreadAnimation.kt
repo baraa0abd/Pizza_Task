@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import java.io.IOException
 import kotlin.random.Random
@@ -42,9 +44,9 @@ fun ToppingSpreadAnimation(
     val randomValues = remember(key) {
         object {
             val targetX = Random.nextInt(-50, 51).toFloat()
-            val targetY = Random.nextInt(100, 201).toFloat()
-            val rotation = Random.nextDouble(-30.0, 30.0).toFloat()
-            val delay = Random.nextLong(0, 201)
+            val targetY = Random.nextInt(50, 101).toFloat()
+            val rotation = Random.nextDouble(-30.0, 10.0).toFloat()
+            val delay = Random.nextLong(0, 100)
         }
     }
 
@@ -71,7 +73,9 @@ fun ToppingSpreadAnimation(
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .offset(y=-195.dp)
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         if (toppingDrawables.isNotEmpty()) {

@@ -75,7 +75,7 @@ fun PizzaImageSwitcher(
 
     LazyRow(
         state = lazyListState,
-        modifier = modifier,
+        modifier = modifier.offset(x=25.dp,y=-50.dp),
         contentPadding = PaddingValues(horizontal = (360.dp - imageSize) / 2f),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -126,7 +126,7 @@ fun SizeSelector(
 
     Row(
         modifier = modifier
-            .offset(y=-250.dp)
+            .offset(y=-270.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
@@ -140,11 +140,11 @@ fun SizeSelector(
                     .clip(CircleShape)
                     .border(
                         width = 1.dp,
-                        color = if (isSelected) Color.Red else Color.LightGray,
+                        color = if (isSelected) Color.LightGray else Color.White,
                         shape = CircleShape
                     )
                     .background(
-                        color = if (isSelected) Color.Red.copy(alpha = 0.1f) else Color.Transparent
+                        color = if (isSelected) Color.LightGray.copy(alpha = 0.1f) else Color.White
                     )
                     .clickable {
                         selectedSize = size
@@ -155,7 +155,7 @@ fun SizeSelector(
                 Text(
                     text = size,
                     fontSize = 16.sp,
-                    color = if (isSelected) Color.Red else Color.Black,
+                    color = Color.Black,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                 )
             }
