@@ -1,6 +1,7 @@
 package com.example.pizzatask.Screens.AnimationCode
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -23,11 +24,18 @@ fun BasilAnimation() {
         Topping(imageRes = R.drawable.basil_9, assetPath = "basil", name = "basil"),
         Topping(imageRes = R.drawable.basil_10, assetPath = "basil", name = "basil")
     )
+
+    // 1. Extract the drawable resource IDs from your list.
+    //    These IDs can be used directly by the Coil image loader.
+    val imageIds = basilToppings.map { it.imageRes }
+
+    // 2. Call the new animation function, passing the list of image IDs.
     ToppingSpreadAnimation(
-        key = basilToppings,
-        assetPath = "basil",
+        key = true, // Use a constant key to run the animation once
+        imageModels = imageIds,
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .offset(y=-180.dp)
     )
 }

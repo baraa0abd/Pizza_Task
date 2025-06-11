@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.pizzatask.Screens.AnimationCode.BasilAnimation
+import com.example.pizzatask.Screens.AnimationCode.BroccoliAnimation
 import com.example.pizzatask.Screens.MainPage.Capation
 import com.example.pizzatask.Screens.MainPage.PizzaScreen
 import com.example.pizzatask.Screens.MainPage.PriceText
@@ -40,6 +42,7 @@ fun Main(){
     Box(
         modifier = Modifier
             .fillMaxSize()
+
     ){
         PizzaTopBar()
         Plate1()
@@ -71,6 +74,7 @@ fun MainPizzaPage() {
             val selectedTopping = toppings[index]
             when (selectedTopping.name) {
                 "basil" -> BasilAnimation()
+                "broccoli" -> BroccoliAnimation()
             }
         }
 

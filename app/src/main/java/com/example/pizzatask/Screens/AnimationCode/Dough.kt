@@ -77,7 +77,7 @@ fun PizzaImageSwitcher(
 
     LazyRow(
         state = lazyListState,
-        modifier = modifier .offset(y=-100.dp),
+        modifier = modifier .offset(x=-25.dp,y=-100.dp),
         contentPadding = PaddingValues(horizontal = (360.dp - itemWidthDp) / 2), // Center the first and last items
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
