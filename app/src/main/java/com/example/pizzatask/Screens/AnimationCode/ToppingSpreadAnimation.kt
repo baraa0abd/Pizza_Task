@@ -1,97 +1,98 @@
 package com.example.pizzatask.Screens
 
-import android.graphics.drawable.Drawable
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
-import java.io.IOException
+import coil.compose.AsyncImage
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 @Composable
 fun ToppingSpreadAnimation(
     key: Any,
-    assetPath: String
+    assetPath: String,
+    modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val assetManager = context.assets
-
-    // This block loads your images. It must have code inside it.
-    val toppingDrawables = remember(assetPath) {
-        (1..10).mapNotNull {
-            try {
-                val fileName = "$assetPath/${assetPath}_$it.png"
-                val inputStream = assetManager.open(fileName)
-                Drawable.createFromStream(inputStream, null)
-            } catch (e: IOException) {
-                null
-            }
-        }
+    val toppingImageUris = remember(assetPath) {
+        (1..10).map { index -> "file:///android_asset/$assetPath/${assetPath}_$index.png" }
     }
 
-    // This block creates the random values correctly.
+    // Generate unique random values for each instance based on the key
     val randomValues = remember(key) {
         object {
             val targetX = Random.nextInt(-50, 51).toFloat()
             val targetY = Random.nextInt(50, 101).toFloat()
             val rotation = Random.nextDouble(-30.0, 10.0).toFloat()
             val delay = Random.nextLong(0, 100)
+            // Pick a random URI from our list
+            val imageUri = toppingImageUris.random()
         }
     }
 
+    // Animation controllers
     val scale = remember { Animatable(2.5f) }
     val alpha = remember { Animatable(0f) }
     val translationX = remember { Animatable(0f) }
     val translationY = remember { Animatable(-300f) }
     val rotation = remember { Animatable(0f) }
 
+    // Animation sequence
     LaunchedEffect(key) {
-        // Reset animations
+        // Reset to initial state for re-triggering
         scale.snapTo(2.5f)
         alpha.snapTo(0f)
         translationY.snapTo(-300f)
         translationX.snapTo(0f)
         rotation.snapTo(0f)
 
-        // Animate with unique values
-        alpha.animateTo(1f, animationSpec = tween(300, delayMillis = randomValues.delay.toInt()))
-        scale.animateTo(1f, animationSpec = tween(1000, delayMillis = randomValues.delay.toInt()))
-        translationY.animateTo(randomValues.targetY, animationSpec = tween(1200, delayMillis = randomValues.delay.toInt()))
-        translationX.animateTo(randomValues.targetX, animationSpec = tween(1200, delayMillis = randomValues.delay.toInt()))
-        rotation.animateTo(randomValues.rotation, animationSpec = tween(1200, delayMillis = randomValues.delay.toInt()))
-    }
-
-    Box(
-        modifier = Modifier
-            .offset(y=-195.dp)
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        if (toppingDrawables.isNotEmpty()) {
-            Image(
-                painter = rememberAsyncImagePainter(model = toppingDrawables[0]),
-                contentDescription = "$assetPath spread animation",
-                modifier = Modifier
-                    .graphicsLayer(
-                        scaleX = scale.value,
-                        scaleY = scale.value,
-                        alpha = alpha.value,
-                        translationX = translationX.value,
-                        translationY = translationY.value,
-                        rotationZ = rotation.value
-                    )
+        // --- 2. Run all animations concurrently using launch { ... } ---
+        launch { alpha.animateTo(1f, animationSpec = tween(300, delayMillis = randomValues.delay.toInt())) }
+        launch { scale.animateTo(1f, animationSpec = tween(1000, delayMillis = randomValues.delay.toInt())) }
+        launch {
+            translationY.animateTo(
+                targetValue = randomValues.targetY,
+                animationSpec = tween(1200, delayMillis = randomValues.delay.toInt())
+            )
+        }
+        launch {
+            translationX.animateTo(
+                targetValue = randomValues.targetX,
+                animationSpec = tween(1200, delayMillis = randomValues.delay.toInt())
+            )
+        }
+        launch {
+            rotation.animateTo(
+                targetValue = randomValues.rotation,
+                animationSpec = tween(1200, delayMillis = randomValues.delay.toInt())
             )
         }
     }
+
+    // --- 3. Apply the caller's modifier directly for predictable layout ---
+    Box(
+        modifier = modifier, // The caller now controls the size and position
+        contentAlignment = Alignment.Center
+    ) {
+        // Using AsyncImage for a slightly cleaner API
+        AsyncImage(
+            model = randomValues.imageUri,
+            contentDescription = "$assetPath spread animation",
+            modifier = Modifier
+                .graphicsLayer( // graphicsLayer is the most performant way to animate
+                    scaleX = scale.value,
+                    scaleY = scale.value,
+                    alpha = alpha.value,
+                    translationX = translationX.value,
+                    translationY = translationY.value,
+                    rotationZ = rotation.value
+                )
+        )
+    }
 }
+

@@ -101,7 +101,7 @@ fun PizzaImageSwitcher(
                 val distance = (itemCenter - center).absoluteValue
                 (1f - (distance / (itemWidthPx * 1.5f)).coerceIn(0f, 0.6f))
             } else {
-                0.4f // Default alpha for items not visible
+                0.4f
             }
 
             Image(

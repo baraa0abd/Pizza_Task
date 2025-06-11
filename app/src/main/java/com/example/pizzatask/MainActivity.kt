@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.pizzatask.Screens.AnimationCode.BasilAnimation
 import com.example.pizzatask.Screens.MainPage.Capation
 import com.example.pizzatask.Screens.MainPage.PizzaScreen
 import com.example.pizzatask.Screens.MainPage.PriceText
@@ -54,28 +55,26 @@ fun Main(){
 
 @Composable
 fun MainPizzaPage() {
-    // 1. DEFINE THE STATE
     val toppings = listOf(
-        Topping(imageRes = R.drawable.basil_3, assetPath = "basil"),
-        Topping(imageRes = R.drawable.mushroom, assetPath = "mushroom"),
-        Topping(imageRes = R.drawable.onion_10, assetPath = "onion"),
-        Topping(imageRes = R.drawable.broccoli_3, assetPath = "broccoli"),
-        Topping(imageRes = R.drawable.sausage_5, assetPath = "sausage")
+        Topping(imageRes = R.drawable.basil_3, assetPath = "basil", name = "basil"),
+        Topping(imageRes = R.drawable.mushroom, assetPath = "mushroom", name = "mushroom"),
+        Topping(imageRes = R.drawable.onion_10, assetPath = "onion", name = "onion"),
+        Topping(imageRes = R.drawable.broccoli_3, assetPath = "broccoli", name = "broccoli"),
+        Topping(imageRes = R.drawable.sausage_5, assetPath = "sausage", name = "sausage")
     )
 
     var selectedIndices by remember { mutableStateOf(emptySet<Int>()) }
 
     Box(modifier = Modifier.fillMaxSize()) {
-
+        // Show animations for selected toppings
         selectedIndices.forEach { index ->
             val selectedTopping = toppings[index]
-            ToppingSpreadAnimation(
-                key = "${selectedTopping.assetPath}_$index",
-                assetPath = selectedTopping.assetPath
-            )
+            when (selectedTopping.name) {
+                "basil" -> BasilAnimation()
+            }
         }
 
-        // 4. USE THE VegSelection FUNCTION
+        // Bottom selection row
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -85,18 +84,17 @@ fun MainPizzaPage() {
                 toppings = toppings,
                 selectedIndices = selectedIndices,
                 onItemSelected = { index ->
-                    val newSelection = selectedIndices.toMutableSet()
-                    if (index in newSelection) {
-                        newSelection.remove(index)
+                    selectedIndices = if (index in selectedIndices) {
+                        selectedIndices - index
                     } else {
-                        newSelection.add(index)
+                        selectedIndices + index
                     }
-                    selectedIndices = newSelection
                 }
             )
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
